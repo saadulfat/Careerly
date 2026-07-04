@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+<link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter:wght@400;500;700;900" onload="this.rel='stylesheet'" rel="stylesheet"/>
+<title>Careerly</title>
+<link href="data:image/x-icon;base64," rel="icon" type="image/x-icon"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style type="text/tailwindcss">
+      :root {
+        --primary-color: #6366f1;
+        --secondary-color: #4f46e5;
+        --background-color: #f8fafc;
+        --text-primary: #1e293b;
+        --text-secondary: #475569;
+        --accent-color: #ec4899;
+      }
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--background-color);
+        color: var(--text-primary);
+      }
+    </style>
+</head>
+<body>
+<div class="relative flex size-full min-h-screen flex-col group/design-root overflow-x-hidden bg-[var(--background-color)]">
+<div class="layout-container flex h-full grow flex-col">
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 px-10 py-5">
+<div class="flex items-center gap-4">
+<svg class="h-8 w-8 text-[var(--primary-color)]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" stroke-linecap="round" stroke-linejoin="round"></path>
+<path d="M20 12h-4" stroke-linecap="round" stroke-linejoin="round"></path>
+<path d="M8 12H4" stroke-linecap="round" stroke-linejoin="round"></path>
+<path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-4v12h4a2 2 0 0 0 0-2Z"></path>
+<path d="M4 20a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4v12H4a2 2 0 0 1 0-2Z"></path>
+</svg>
+<h2 class="text-2xl font-bold text-[var(--text-primary)]">Careerly</h2>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-base font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors" href="#">Home</a>
+<a class="text-base font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors" href="#">About</a>
+<a class="text-base font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors" href="#">Services</a>
+<a class="text-base font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors" href="#">Contact</a>
+</nav>
+<div class="flex items-center gap-4">
+<button id="logoutBtn" onclick="logout()" class="text-red-500 hover:text-red-600 transition-colors duration-200 ease-in-out focus:outline-none p-2 rounded-full hover:bg-red-50" title="Logout">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+</svg>
+</button>
+</div>
+</header>
+<main class="flex-1">
+<section class="relative text-center py-20 px-4 sm:px-6 lg:px-8 overflow-hidden bg-white">
+<div class="absolute inset-0 bg-gradient-to-br from-indigo-50/50 via-white to-blue-50/50"></div>
+<div class="absolute -top-32 -left-32 w-96 h-96 bg-indigo-100 rounded-full opacity-50 blur-3xl"></div>
+<div class="absolute -bottom-32 -right-32 w-96 h-96 bg-blue-100 rounded-full opacity-50 blur-3xl"></div>
+<div class="relative max-w-4xl mx-auto">
+<h1 class="text-4xl sm:text-5xl md:text-6xl font-black text-slate-800 leading-tight tracking-tighter mb-6"> Boost Your Career with <span class="text-[var(--primary-color)]">Careerly</span></h1>
+<p class="text-lg sm:text-xl text-slate-600 max-w-3xl mx-auto mb-10 leading-relaxed"> Unlock your potential and achieve your career goals with our expert tools and resources. Get personalized insights and practice for success. </p>
+<div class="flex flex-wrap gap-6 justify-center">
+<a href="/analysis" class="bg-[var(--primary-color)] text-white px-8 py-4 rounded-lg text-lg font-bold hover:bg-[var(--secondary-color)] transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] focus:ring-opacity-50 shadow-lg hover:shadow-xl transform hover:-translate-y-1"> Detailed Analysis </a>
+<a href="/interview" class="bg-white border-2 border-slate-300 text-slate-700 px-8 py-4 rounded-lg text-lg font-bold hover:bg-slate-50 hover:border-[var(--primary-color)] hover:text-[var(--primary-color)] transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:ring-opacity-50 shadow-lg hover:shadow-xl transform hover:-translate-y-1"> Mock Interview </a>
+<a href="/interview" class="sr-only">Start Mock Interview</a>
+</div>
+</div>
+</section>
+<section class="py-20 px-4 sm:px-6 lg:px-8 bg-slate-50">
+<div class="max-w-7xl mx-auto">
+<div class="text-center mb-16">
+<h2 class="text-3xl sm:text-4xl font-bold text-slate-800 mb-4">Our Core Services</h2>
+<p class="text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed"> Careerly offers a range of services designed to help you succeed in your career journey. From detailed analysis to mock interviews, we've got you covered. </p>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+<div class="bg-white rounded-2xl shadow-lg p-8 border border-slate-200 text-center flex flex-col items-center hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+<div class="p-5 rounded-full bg-indigo-100 mb-5 inline-block">
+<svg class="w-10 h-10 text-[var(--primary-color)]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<h3 class="text-xl font-bold text-slate-800 mb-3">Detailed Analysis</h3>
+<p class="text-slate-600 leading-relaxed">Get in-depth analysis of your skills and career path.</p>
+</div>
+<div class="bg-white rounded-2xl shadow-lg p-8 border border-slate-200 text-center flex flex-col items-center hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+<div class="p-5 rounded-full bg-indigo-100 mb-5 inline-block">
+<svg class="w-10 h-10 text-[var(--primary-color)]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 18.75a6 6 0 0 0 6-6V7.5a6 6 0 0 0-12 0v5.25a6 6 0 0 0 6 6Z" stroke-linecap="round" stroke-linejoin="round"></path>
+<path d="M19.5 12a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<h3 class="text-xl font-bold text-slate-800 mb-3">Mock Interview</h3>
+<p class="text-slate-600 leading-relaxed">Practice your interview skills with our mock interview service.</p>
+</div>
+<div class="bg-white rounded-2xl shadow-lg p-8 border border-slate-200 text-center flex flex-col items-center hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+<div class="p-5 rounded-full bg-indigo-100 mb-5 inline-block">
+<svg class="w-10 h-10 text-[var(--primary-color)]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<h3 class="text-xl font-bold text-slate-800 mb-3">Resume Review</h3>
+<p class="text-slate-600 leading-relaxed">Improve your resume with expert feedback.</p>
+</div>
+<div class="bg-white rounded-2xl shadow-lg p-8 border border-slate-200 text-center flex flex-col items-center hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+<div class="p-5 rounded-full bg-indigo-100 mb-5 inline-block">
+<svg class="w-10 h-10 text-[var(--primary-color)]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m-7.5-2.226A3 3 0 0 1 18 15.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 4.5A2.25 2.25 0 0 0 13.5 18.75h-3a2.25 2.25 0 0 0 2.25-2.25V13.5A2.25 2.25 0 0 0 10.5 11.25h-3a2.25 2.25 0 0 0-2.25 2.25v3.75a2.25 2.25 0 0 0 2.25 2.25h3.75a2.25 2.25 0 0 0 2.25-2.25V16.5" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<h3 class="text-xl font-bold text-slate-800 mb-3">Career Coaching</h3>
+<p class="text-slate-600 leading-relaxed">Receive personalized career coaching from experienced professionals.</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<footer class="border-t border-solid border-slate-200 bg-white">
+<div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+<div class="flex flex-col items-center justify-between lg:flex-row">
+<div class="flex items-center gap-4 mb-6 lg:mb-0">
+<svg class="h-8 w-8 text-[var(--primary-color)]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" stroke-linecap="round" stroke-linejoin="round"></path>
+<path d="M20 12h-4" stroke-linecap="round" stroke-linejoin="round"></path>
+<path d="M8 12H4" stroke-linecap="round" stroke-linejoin="round"></path>
+<path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-4v12h4a2 2 0 0 0 0-2Z"></path>
+<path d="M4 20a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4v12H4a2 2 0 0 1 0-2Z"></path>
+</svg>
+<h2 class="text-2xl font-bold text-[var(--text-primary)]">Careerly</h2>
+</div>
+<nav class="flex flex-wrap justify-center gap-x-6 gap-y-2 mb-6 lg:mb-0">
+<a class="text-base text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors" href="#">Home</a>
+<a class="text-base text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors" href="#">About</a>
+<a class="text-base text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors" href="#">Services</a>
+<a class="text-base text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors" href="#">Contact</a>
+<a class="text-base text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors" href="#">Privacy Policy</a>
+<a class="text-base text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors" href="#">Terms of Service</a>
+</nav>
+<div class="flex justify-center space-x-6">
+<a class="text-[var(--text-secondary)] hover:text-[var(--primary-color)] transition-colors" href="#">
+<svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+<path d="M22.46,6.52,21,5.25a1,1,0,0,0-1.12.33A12.2,12.2,0,0,1,17.2,8.68a1,1,0,0,0,.5,1.26l.12.06a13.2,13.2,0,0,0,3.54,1.48,1,1,0,0,0,1.15-1.21,11.5,11.5,0,0,1-.9-3.66,1,1,0,0,0-.15-.49ZM1.54,6.52,3,5.25a1,1,0,0,1,1.12.33A12.2,12.2,0,0,0,6.8,8.68a1,1,0,0,1-.5,1.26l-.12.06A13.2,13.2,0,0,1,2.64,11.48a1,1,0,0,1-1.15-1.21,11.5,11.5,0,0,0,.9-3.66,1,1,0,0,1,.15-.49ZM12,2A10,10,0,0,0,2,12a9.89,9.89,0,0,0,2.22,6.24,1,1,0,0,0,1.45-.2,7.12,7.12,0,0,1,12.66,0,1,1,0,0,0,1.45.2A9.89,9.89,0,0,0,22,12,10,10,0,0,0,12,2Zm0,18a8,8,0,0,1-6-2.88,9.13,9.13,0,0,0,12,0A8,8,0,0,1,12,20Z"></path>
+</svg>
+</a>
+<a class="text-[var(--text-secondary)] hover:text-[var(--primary-color)] transition-colors" href="#">
+<svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+<path d="M12 2.04c-5.5 0-9.96 4.46-9.96 9.96s4.46 9.96 9.96 9.96 9.96-4.46 9.96-9.96S17.5 2.04 12 2.04zM16.5 12h-3V8c0-.55-.45-1-1-1s-1 .45-1 1v4h-3c-.55 0-1 .45-1 1s.45 1 1 1h3v4c0 .55.45 1 1 1s1-.45 1-1v-4h3c.55 0 1-.45 1-1s-.45-1-1-1z"></path>
+</svg>
+</a>
+<a class="text-[var(--text-secondary)] hover:text-[var(--primary-color)] transition-colors" href="#">
+<svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+<path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm6,10a6,6,0,1,1-6-6A6,6,0,0,1,18,12Z"></path>
+</svg>
+</a>
+</div>
+</div>
+<div class="mt-8 pt-8 border-t border-slate-200 text-center text-[var(--text-secondary)]">
+<p>© 2024 Careerly. All rights reserved.</p>
+</div>
+</div>
+</footer>
+</div>
+</div>
+
+<script>
+function logout() {
+    fetch('/auth/logout', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            window.location.href = '/auth/login';
+        } else {
+            alert('Logout failed: ' + (data.message || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        console.error('Logout error:', error);
+        // Fallback: redirect to login even if there's an error
+        window.location.href = '/auth/login';
+    });
+}
+</script>
+
+</body></html>
+

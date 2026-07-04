@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Careerly - AI Interview Coach</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <!-- Google Fonts (Inter to match home theme) -->
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
+    <link rel="stylesheet" as="style" onload="this.rel='stylesheet'" href="https://fonts.googleapis.com/css2?display=swap&family=Inter:wght@400;500;700;900" />
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #4f46e5;
+            --background-color: #f8fafc;
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --accent-color: #ec4899;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+        }
+
+        .spinner {
+            border: 4px solid rgba(99, 102, 241, 0.2);
+            border-left-color: var(--primary-color);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Recording indicator pulse animation */
+        .recording-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background-color: red;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Audio controls styling */
+        .audio-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .mic-button {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .mic-button:hover {
+            background-color: var(--secondary-color);
+        }
+        .mic-button.recording {
+            background-color: red;
+            color: white;
+        }
+        .recording-text {
+            color: red;
+            font-weight: bold;
+        }
+        .waveform {
+            height: 30px;
+            width: 100px;
+            border: 1px solid #e2e8f0;
+            background-color: #f1f5f9;
+            border-radius: 5px;
+            display: inline-block;
+            vertical-align: middle;
+            position: relative;
+            overflow: hidden;
+        }
+        .waveform-bar {
+            position: absolute;
+            bottom: 0;
+            width: 2px;
+            background-color: var(--primary-color);
+            animation: animate-bar 0.5s linear infinite alternate;
+        }
+        @keyframes animate-bar {
+            from { height: 10%; }
+            to { height: 90%; }
+        }
+
+        /* Star rating styles */
+        .star-rating {
+            display: flex;
+            gap: 5px;
+            margin: 10px 0;
+        }
+        .star {
+            font-size: 24px;
+            color: #ccc;
+            cursor: pointer;
+            transition: color 0.2s, transform 0.12s ease;
+            user-select: none;
+        }
+        .star.active {
+            color: #ffd700;
+            transform: scale(1.05);
+        }
+        .star:hover {
+            color: #ffd700;
+            transform: scale(1.12);
+        }
+        .star:hover ~ .star {
+            color: #ccc;
+        }
+
+        /* Toast notifications */
+        .toast-container { 
+            position: fixed; 
+            top: 20px; 
+            right: 20px; 
+            z-index: 9999; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 10px; 
+        }
+        .toast { 
+            min-width: 260px; 
+            max-width: 420px; 
+            padding: 12px 14px; 
+            border-radius: 12px; 
+            display: flex; 
+            align-items: flex-start; 
+            gap: 10px; 
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15); 
+            border: 1px solid rgba(0,0,0,0.08); 
+            opacity: 0; 
+            transform: translateY(-8px); 
+            animation: toastIn 0.22s ease forwards; 
+            background: rgba(255,255,255,0.98); 
+            color: #1e293b; 
+        }
+        .toast-success { 
+            background: rgba(240, 253, 244, 0.98); 
+            color: #14532d; 
+            border-color: rgba(22,163,74,0.25); 
+        }
+        .toast-error { 
+            background: rgba(254, 242, 242, 0.98); 
+            color: #7f1d1d; 
+            border-color: rgba(239,68,68,0.25); 
+        }
+        .toast-info { 
+            background: rgba(239, 246, 255, 0.98); 
+            color: #1e3a8a; 
+            border-color: rgba(59,130,246,0.25); 
+        }
+        .toast-title { font-weight: 700; margin-bottom: 2px; }
+        .toast-close { margin-left: auto; opacity: 0.8; cursor: pointer; }
+        @keyframes toastIn { to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0);} }
+
+        /* Custom form inputs to match home page theme */
+        .form-input {
+            border: 1px solid #e2e8f0;
+            background: white;
+            transition: all 0.2s ease;
+        }
+        .form-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        /* Card styling to match home page */
+        .card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Badges and sub-cards for feedback */
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 600;
+            background: #eef2ff;
+            color: #3730a3;
+            border: 1px solid #c7d2fe;
+        }
+        .sub-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        /* Sidebar styling */
+        .glass {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        /* Tips widget */
+        #tipsWidget {
+            color: var(--text-primary);
+        }
+
+        /* Accordion styling */
+        details.report-item {
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            background: #ffffff;
+            padding: 0;
+        }
+        details.report-item > summary {
+            cursor: pointer;
+            list-style: none;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+        details.report-item[open] > summary {
+            border-bottom: 1px solid #e2e8f0;
+            background: #f8fafc;
+        }
+        summary::-webkit-details-marker { display: none; }
+    </style>
+</head>
+<body class="bg-[var(--background-color)] text-[var(--text-primary)]">
+    
+    <div class="relative flex min-h-screen flex-col overflow-x-hidden">
+        <div class="flex h-full flex-col">
+            <!-- Header matching home page -->
+            <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 px-10 py-5">
+                <div class="flex items-center gap-4">
+                    <svg class="h-8 w-8 text-[var(--primary-color)]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" stroke-linecap="round" stroke-linejoin="round"></path>
+                        <path d="M20 12h-4" stroke-linecap="round" stroke-linejoin="round"></path>
+                        <path d="M8 12H4" stroke-linecap="round" stroke-linejoin="round"></path>
+                        <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-4v12h4a2 2 0 0 0 0-2Z"></path>
+                        <path d="M4 20a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4v12H4a2 2 0 0 1 0-2Z"></path>
+                    </svg>
+                    <h2 class="text-2xl font-bold text-[var(--text-primary)]">Careerly</h2>
+                </div>
+                <nav class="hidden md:flex items-center gap-8">
+                    <a class="text-base font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors" href="#">Home</a>
+                    <a class="text-base font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors" href="#">About</a>
+                    <a class="text-base font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors" href="#">Services</a>
+                    <a class="text-base font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors" href="#">Contact</a>
+                </nav>
+                <a href="/" class="text-[var(--text-secondary)] hover:text-[var(--primary-color)] transition-colors duration-200 ease-in-out p-2 rounded-full hover:bg-slate-50" title="Back to Home">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                    </svg>
+                </a>
+            </header>
+
+            <main class="flex flex-1 flex-col justify-center px-4 md:px-20 lg:px-40 py-5">
+                <div class="max-w-[1200px] mx-auto flex flex-col gap-6">
+
+                    <!-- Role Selection -->
+                    <div id="roleSection" class="flex justify-center items-center min-h-screen">
+                        <div class="card p-10 w-full max-w-lg flex flex-col gap-6 animate-[fadeIn_0.3s_ease]">
+                            <div class="text-center mb-6">
+                                <h1 class="text-3xl md:text-4xl font-black text-[var(--text-primary)] leading-tight mb-4">
+                                    Ace Your Next Interview with 
+                                    <span class="text-[var(--primary-color)]">AI-Powered Practice</span>
+                                </h1>
+                                <p class="text-lg text-[var(--text-secondary)] leading-relaxed">
+                                    Get personalized questions and expert feedback to boost your confidence
+                                </p>
+                            </div>
+                            <form id="roleForm" class="flex flex-col gap-5">
+                                <div class="flex flex-col">
+                                    <label for="roleInput" class="text-[var(--text-primary)] font-medium mb-2">Role</label>
+                                    <input id="roleInput" placeholder="e.g., Backend Developer, Product Manager"
+                                        class="form-input rounded-lg px-4 py-3 text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]" required />
+                                </div>
+                                <div class="flex flex-col">
+                                    <label for="typeSelect" class="text-[var(--text-primary)] font-medium mb-2">Type</label>
+                                    <select id="typeSelect"
+                                        class="form-input rounded-lg px-4 py-3 text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]" required>
+                                        <option value="">Select Type</option>
+                                        <option value="Academia">Academia</option>
+                                        <option value="Internship">Internship</option>
+                                        <option value="Job">Job</option>
+                                    </select>
+                                </div>
+                                <div class="flex flex-col">
+                                    <label for="levelSelect" class="text-[var(--text-primary)] font-medium mb-2">Level</label>
+                                    <select id="levelSelect"
+                                        class="form-input rounded-lg px-4 py-3 text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]" required>
+                                        <option value="">Select Level</option>
+                                        <option value="Beginner">Beginner</option>
+                                        <option value="Intermediate">Intermediate</option>
+                                        <option value="Advanced">Advanced</option>
+                                    </select>
+                                </div>
+                                <!-- Interview Mode Selection -->
+                                <div class="flex flex-col">
+                                    <label class="text-[var(--text-primary)] font-medium mb-2">Interview Mode</label>
+                                    <div class="flex gap-6">
+                                        <div class="flex items-center">
+                                            <input type="radio" id="modeText" name="interviewMode" value="text" class="form-radio text-[var(--primary-color)]" checked>
+                                            <label for="modeText" class="ml-2 text-[var(--text-primary)]">Text</label>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <input type="radio" id="modeAudio" name="interviewMode" value="audio" class="form-radio text-[var(--primary-color)]">
+                                            <label for="modeAudio" class="ml-2 text-[var(--text-primary)]">Audio</label>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <input type="radio" id="modeVideo" name="interviewMode" value="video" class="form-radio text-[var(--primary-color)]">
+                                            <label for="modeVideo" class="ml-2 text-[var(--text-primary)]">Video</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="submit"
+                                    class="bg-[var(--primary-color)] hover:bg-[var(--secondary-color)] text-white w-full font-bold py-3 rounded-lg transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] focus:ring-opacity-50 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                                    Start Interview Practice
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Loading -->
+                    <div id="loadingSection" class="hidden text-center">
+                        <div class="flex flex-col items-center gap-4">
+                            <div class="spinner"></div>
+                            <p class="text-lg text-[var(--text-secondary)]">Generating personalized questions...</p>
+                        </div>
+                    </div>
+
+                    <!-- Interview Questions -->
+                    <div id="interviewSection" class="hidden flex justify-center items-center min-h-screen">
+                        <div class="card p-10 w-full max-w-4xl flex flex-col gap-6 animate-[fadeIn_0.3s_ease]">
+                            <div class="mb-4">
+                                <p id="progressText" class="font-medium text-[var(--text-secondary)] mb-2"></p>
+                                <div class="rounded bg-slate-200 h-2 overflow-hidden">
+                                    <div id="progressBar" class="h-2 rounded bg-gradient-to-r from-[var(--primary-color)] to-[var(--secondary-color)] w-1/5 transition-[width] duration-500 ease-out"></div>
+                                </div>
+                            </div>
+                            
+                            <h2 id="questionBox" class="text-2xl md:text-3xl font-bold text-[var(--text-primary)] leading-tight mb-6"></h2>
+
+                            <!-- Audio Controls -->
+                            <div id="audioControls" class="hidden flex-col gap-4 mb-4">
+                                <div class="flex items-center gap-3">
+                                    <button id="recordButton" class="mic-button">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
+                                        </svg>
+                                    </button>
+                                    <span id="recordingStatus" class="recording-text hidden">
+                                        <span class="recording-indicator"></span> Recording...
+                                    </span>
+                                    <div id="audioWaveform" class="waveform hidden"></div>
+                                    <p id="audioTranscriptionPreview" class="text-sm italic text-[var(--text-secondary)] flex-1">
+                                        Record your answer or upload an audio file below.
+                                    </p>
+                                </div>
+                                <div class="flex items-center my-2">
+                                    <div class="flex-grow border-t border-slate-300"></div>
+                                    <span class="flex-shrink mx-4 text-[var(--text-secondary)]">OR</span>
+                                    <div class="flex-grow border-t border-slate-300"></div>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <input type="file" id="audioUploadInput" accept="audio/*" 
+                                        class="flex-1 text-sm text-[var(--text-secondary)] file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[var(--primary-color)] file:text-white hover:file:bg-[var(--secondary-color)] cursor-pointer">
+                                    <button id="uploadAudioButton" class="bg-[var(--primary-color)] hover:bg-[var(--secondary-color)] px-4 py-2 rounded-md font-medium text-white transition-colors">
+                                        Upload Audio
+                                    </button>
+                                    <span id="audioUploadStatus" class="text-sm text-[var(--text-secondary)]"></span>
+                                </div>
+                            </div>
+
+                            <!-- Video Controls -->
+                            <div id="videoControls" class="hidden flex-col gap-4 mb-4">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="flex flex-col gap-2">
+                                        <label class="text-[var(--text-primary)] font-medium">Upload Video File</label>
+                                        <div class="flex gap-2">
+                                            <input type="file" id="videoUploadInput" accept="video/*" 
+                                                class="flex-1 text-sm text-[var(--text-secondary)] file:mr-2 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[var(--primary-color)] file:text-white hover:file:bg-[var(--secondary-color)] cursor-pointer">
+                                            <button id="uploadVideoButton" class="bg-[var(--primary-color)] hover:bg-[var(--secondary-color)] px-4 py-2 rounded-md font-medium text-white transition-colors whitespace-nowrap">
+                                                Upload
+                                            </button>
+                                        </div>
+                                        <span id="videoPreview" class="text-sm text-[var(--text-secondary)]">No video selected.</span>
+                                    </div>
+                                    <div class="flex flex-col gap-2">
+                                        <label class="text-[var(--text-primary)] font-medium">Record with Webcam</label>
+                                        <div class="flex gap-2">
+                                            <button id="startWebcamButton" class="bg-[var(--primary-color)] hover:bg-[var(--secondary-color)] px-4 py-2 rounded-md font-medium text-white transition-colors flex-1">
+                                                Start Recording
+                                            </button>
+                                            <button id="stopWebcamButton" class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-md font-medium text-white transition-colors flex-1" disabled>
+                                                Stop Recording
+                                            </button>
+                                        </div>
+                                        <span class="text-sm text-[var(--text-secondary)]">Record directly from your webcam</span>
+                                    </div>
+                                </div>
+                                <div id="videoUploadProgress" class="text-sm text-[var(--primary-color)] mt-2"></div>
+                            </div>
+
+                            <textarea id="answerInput" placeholder="Type your answer here..." 
+                                class="form-input w-full rounded-lg p-4 min-h-[150px] resize-none focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"></textarea>
+                            
+                            <div class="flex justify-between items-center">
+                                <p id="wordCount" class="text-sm text-[var(--text-secondary)]">Word count: 0/200</p>
+                                <button id="submitAnswer" 
+                                    class="bg-[var(--primary-color)] hover:bg-[var(--secondary-color)] text-white px-8 py-3 rounded-lg font-bold transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] focus:ring-opacity-50 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                                    Submit Answer
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question Feedback Section -->
+                    <div id="questionFeedbackSection" class="hidden p-6 animate-[fadeIn_0.3s_ease]">
+                        <div class="card p-8 max-w-5xl mx-auto">
+                            <div id="feedbackScores" class="mb-6 text-[var(--text-primary)]"></div>
+                            <div id="feedbackContent" class="mb-6 text-[var(--text-primary)] grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+                            <div class="flex gap-4">
+                                <button id="nextQuestion" class="hidden bg-[var(--primary-color)] hover:bg-[var(--secondary-color)] text-white px-6 py-3 rounded-lg font-bold transition-colors">
+                                    Next Question
+                                </button>
+                                <button id="viewReport" class="hidden bg-[var(--primary-color)] hover:bg-[var(--secondary-color)] text-white px-6 py-3 rounded-lg font-bold transition-colors">
+                                    View Report
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Final Report Section -->
+                    <div id="reportSection" class="hidden p-6 text-[var(--text-primary)] animate-[fadeIn_0.3s_ease]">
+                        <div class="card p-8">
+                            <h2 class="text-3xl font-bold mb-6 text-center">Interview Summary Report</h2>
+                            <div id="reportSummary" class="mb-6"></div>
+                            <div id="report" class="mb-8"></div>
+                            <div class="text-center">
+                                <p class="text-[var(--text-secondary)] mb-6">Help us improve Careerly by sharing your feedback!</p>
+                                <button id="restartBtn" class="bg-[var(--primary-color)] hover:bg-[var(--secondary-color)] text-white px-8 py-4 rounded-lg font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                                    Share Feedback & Help Us Learn! 🚀
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Feedback Collection Section -->
+                    <div id="feedbackSection" class="hidden p-6 text-[var(--text-primary)] animate-[fadeIn_0.3s_ease]">
+                        <div class="card p-8">
+                            <h2 class="text-3xl font-bold mb-4 text-center">Help Us Improve! 🚀</h2>
+                            <p class="text-[var(--text-secondary)] mb-8 text-center">Your feedback helps our AI learn and provide better interview coaching for everyone.</p>
+                            
+                            <!-- Overall Experience Rating -->
+                            <div class="bg-slate-50 rounded-xl p-6 mb-6">
+                                <h3 class="text-lg font-bold text-[var(--text-primary)] mb-4">Overall Experience</h3>
+                                <p class="text-[var(--text-secondary)] mb-3">How would you rate your overall interview experience?</p>
+                                <div class="star-rating" id="overallRating">
+                                    <span class="star" data-rating="1">⭐</span>
+                                    <span class="star" data-rating="2">⭐</span>
+                                    <span class="star" data-rating="3">⭐</span>
+                                    <span class="star" data-rating="4">⭐</span>
+                                    <span class="star" data-rating="5">⭐</span>
+                                </div>
+                            </div>
+
+                            <!-- AI Helpfulness Rating -->
+                            <div class="bg-slate-50 rounded-xl p-6 mb-6">
+                                <h3 class="text-lg font-bold text-[var(--text-primary)] mb-4">AI Feedback Quality</h3>
+                                <p class="text-[var(--text-secondary)] mb-3">How helpful and accurate was the AI feedback?</p>
+                                <div class="star-rating" id="aiHelpfulnessRating">
+                                    <span class="star" data-rating="1">⭐</span>
+                                    <span class="star" data-rating="2">⭐</span>
+                                    <span class="star" data-rating="3">⭐</span>
+                                    <span class="star" data-rating="4">⭐</span>
+                                    <span class="star" data-rating="5">⭐</span>
+                                </div>
+                            </div>
+
+                            <!-- Feature Ratings -->
+                            <div class="bg-slate-50 rounded-xl p-6 mb-6">
+                                <h3 class="text-lg font-bold text-[var(--text-primary)] mb-4">Feature Ratings</h3>
+                                <div class="space-y-6">
+                                    <div>
+                                        <p class="text-[var(--text-secondary)] mb-2">Question Quality & Relevance</p>
+                                        <div class="star-rating" id="questionQualityRating">
+                                            <span class="star" data-rating="1">⭐</span>
+                                            <span class="star" data-rating="2">⭐</span>
+                                            <span class="star" data-rating="3">⭐</span>
+                                            <span class="star" data-rating="4">⭐</span>
+                                            <span class="star" data-rating="5">⭐</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <p class="text-[var(--text-secondary)] mb-2">Audio/Video Analysis</p>
+                                        <div class="star-rating" id="audioVideoRating">
+                                            <span class="star" data-rating="1">⭐</span>
+                                            <span class="star" data-rating="2">⭐</span>
+                                            <span class="star" data-rating="3">⭐</span>
+                                            <span class="star" data-rating="4">⭐</span>
+                                            <span class="star" data-rating="5">⭐</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <p class="text-[var(--text-secondary)] mb-2">User Interface & Experience</p>
+                                        <div class="star-rating" id="uiRating">
+                                            <span class="star" data-rating="1">⭐</span>
+                                            <span class="star" data-rating="2">⭐</span>
+                                            <span class="star" data-rating="3">⭐</span>
+                                            <span class="star" data-rating="4">⭐</span>
+                                            <span class="star" data-rating="5">⭐</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Improvement Suggestions -->
+                            <div class="bg-slate-50 rounded-xl p-6 mb-6">
+                                <h3 class="text-lg font-bold text-[var(--text-primary)] mb-4">Suggestions for Improvement</h3>
+                                <p class="text-[var(--text-secondary)] mb-3">What would you like to see improved or added?</p>
+                                <textarea id="improvementSuggestions" placeholder="Share your ideas for making Careerly better..." 
+                                    class="form-input w-full h-24 p-3 rounded-lg resize-none"></textarea>
+                            </div>
+
+                            <!-- Recommendation -->
+                            <div class="bg-slate-50 rounded-xl p-6 mb-8">
+                                <h3 class="text-lg font-bold text-[var(--text-primary)] mb-4">Would you recommend Careerly?</h3>
+                                <div class="flex gap-6">
+                                    <label class="flex items-center">
+                                        <input type="radio" name="recommendation" value="true" class="form-radio text-[var(--primary-color)]">
+                                        <span class="ml-2 text-[var(--text-primary)]">Yes, definitely!</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="radio" name="recommendation" value="false" class="form-radio text-[var(--primary-color)]">
+                                        <span class="ml-2 text-[var(--text-primary)]">Not really</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="flex justify-center gap-4">
+                                <button id="submitFeedback" class="bg-[var(--primary-color)] hover:bg-[var(--secondary-color)] text-white px-8 py-3 rounded-lg font-bold">Submit Feedback</button>
+                                <button id="finishSession" class="bg-slate-200 hover:bg-slate-300 text-[var(--text-primary)] px-8 py-3 rounded-lg font-bold">Finish</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Toasts -->
+                    <div class="toast-container" id="toastContainer"></div>
+
+                </div>
+            </main>
+
+            <!-- Footer -->
+            <footer class="border-t border-slate-200 px-6 md:px-10 py-6 text-center text-[var(--text-secondary)]">
+                <p>© <span id="yearNow"></span> Careerly. All rights reserved.</p>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        const roleForm = document.getElementById('roleForm');
+        const roleInput = document.getElementById('roleInput');
+        const typeSelect = document.getElementById('typeSelect');
+        const levelSelect = document.getElementById('levelSelect');
+        const modeRadios = document.getElementsByName('interviewMode');
+
+        const roleSection = document.getElementById('roleSection');
+        const loadingSection = document.getElementById('loadingSection');
+        const interviewSection = document.getElementById('interviewSection');
+        const questionBox = document.getElementById('questionBox');
+        const answerInput = document.getElementById('answerInput');
+        const submitAnswerBtn = document.getElementById('submitAnswer');
+        const progressBar = document.getElementById('progressBar');
+        const progressText = document.getElementById('progressText');
+        const wordCount = document.getElementById('wordCount');
+
+        const questionFeedbackSection = document.getElementById('questionFeedbackSection');
+        const feedbackScores = document.getElementById('feedbackScores');
+        const feedbackContent = document.getElementById('feedbackContent');
+        const nextQuestionBtn = document.getElementById('nextQuestion');
+        const viewReportBtn = document.getElementById('viewReport');
+
+        const reportSection = document.getElementById('reportSection');
+        const reportSummary = document.getElementById('reportSummary');
+        const report = document.getElementById('report');
+        const restartBtn = document.getElementById('restartBtn');
+
+        const audioControls = document.getElementById('audioControls');
+        const recordButton = document.getElementById('recordButton');
+        const recordingStatus = document.getElementById('recordingStatus');
+        const audioWaveform = document.getElementById('audioWaveform');
+        const audioTranscriptionPreview = document.getElementById('audioTranscriptionPreview');
+        const audioUploadInput = document.getElementById('audioUploadInput');
+        const uploadAudioButton = document.getElementById('uploadAudioButton');
+        const audioUploadStatus = document.getElementById('audioUploadStatus');
+
+        const videoControls = document.getElementById('videoControls');
+        const videoUploadInput = document.getElementById('videoUploadInput');
+        const videoPreview = document.getElementById('videoPreview');
+        const startWebcamButton = document.getElementById('startWebcamButton');
+        const stopWebcamButton = document.getElementById('stopWebcamButton');
+        const videoUploadProgress = document.getElementById('videoUploadProgress');
+
+        const feedbackSection = document.getElementById('feedbackSection');
+        const submitFeedbackBtn = document.getElementById('submitFeedback');
+        const finishSessionBtn = document.getElementById('finishSession');
+
+        const toastContainer = document.getElementById('toastContainer');
+
+        let questions = [];
+        let currentIndex = 0;
+        let totalQuestions = 0;
+        let interviewMode = 'text';
+        let mediaRecorder = null;
+        let recordedChunks = [];
+        let webcamStream = null;
+
+        document.getElementById('yearNow').textContent = new Date().getFullYear();
+
+        function showToast(title, message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.innerHTML = `<div><div class="toast-title">${title}</div><div>${message}</div></div><div class="toast-close">✕</div>`;
+            toast.querySelector('.toast-close').onclick = () => toast.remove();
+            toastContainer.appendChild(toast);
+            setTimeout(() => toast.remove(), 4500);
+        }
+
+        function setView(section) {
+            roleSection.classList.add('hidden');
+            loadingSection.classList.add('hidden');
+            interviewSection.classList.add('hidden');
+            questionFeedbackSection.classList.add('hidden');
+            reportSection.classList.add('hidden');
+            feedbackSection.classList.add('hidden');
+            section.classList.remove('hidden');
+        }
+
+        function updateProgress() {
+            const progress = ((currentIndex + 1) / totalQuestions) * 100;
+            progressBar.style.width = `${Math.max(10, progress)}%`;
+            progressText.textContent = `Question ${currentIndex + 1} of ${totalQuestions}`;
+        }
+
+        function getSelectedMode() {
+            for (const r of modeRadios) { if (r.checked) return r.value; }
+            return 'text';
+        }
+
+        // Role form submit -> start interview
+        roleForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const role = roleInput.value.trim();
+            const interview_type = typeSelect.value;
+            const level = levelSelect.value;
+            interviewMode = getSelectedMode();
+            if (!role || !interview_type || !level) return showToast('Missing Info', 'Please complete the form.', 'error');
+            setView(loadingSection);
+            try {
+                const res = await fetch('/start_interview', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ role, interview_type, level, interview_mode: interviewMode })
+                });
+                const data = await res.json();
+                if (!res.ok || !data.success) throw new Error(data.error || 'Failed to start');
+                questions = data.questions || [];
+                totalQuestions = data.total_questions || questions.length || 0;
+                if (!totalQuestions) throw new Error('No questions generated');
+                currentIndex = 0;
+                questionBox.textContent = questions[currentIndex];
+                updateProgress();
+                // Toggle controls based on mode
+                audioControls.classList.toggle('hidden', interviewMode !== 'audio');
+                videoControls.classList.toggle('hidden', interviewMode !== 'video');
+                setView(interviewSection);
+                showToast('Ready', 'Interview started. Good luck!', 'success');
+            } catch (err) {
+                setView(roleSection);
+                showToast('Error', err.message || 'Unable to start interview', 'error');
+            }
+        });
+
+        // Word counter
+        answerInput.addEventListener('input', () => {
+            const words = answerInput.value.trim().split(/\s+/).filter(Boolean);
+            wordCount.textContent = `Word count: ${words.length}/200`;
+        });
+
+        // Submit answer
+        submitAnswerBtn.addEventListener('click', async () => {
+            const answer = interviewMode === 'audio' || interviewMode === 'video' ? (window.currentTranscription || '') : (answerInput.value || '');
+            try {
+                const res = await fetch('/submit_answer', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ q_index: currentIndex, answer })
+                });
+                const data = await res.json();
+                if (!res.ok || !data.success) throw new Error(data.error || 'Submission failed');
+                // Show feedback with badges and sub-cards
+                const scores = data.feedback.scores || {};
+                const badge = (label, val) => `<span class=\"badge\">${label}: ${val ?? 0}</span>`;
+                feedbackScores.innerHTML = `
+                    <div class=\"flex flex-wrap gap-2 items-center\">
+                        <span class=\"font-semibold mr-2\">Scores:</span>
+                        ${badge('Clarity', scores.Clarity)}
+                        ${badge('Knowledge', scores.Knowledge)}
+                        ${badge('Conciseness', scores.Conciseness)}
+                        ${badge('Confidence', scores.Confidence)}
+                        ${badge('Structure', scores.Structure)}
+                    </div>`;
+                const strengthsList = (data.feedback.strengths || []).map(s => `<li class=\"mb-1\">${s}</li>`).join('');
+                const areasList = (data.feedback.areas || []).map(s => `<li class=\"mb-1\">${s}</li>`).join('');
+                feedbackContent.innerHTML = `
+                    <div class=\"sub-card\">
+                        <div class=\"font-bold mb-2\">Strengths</div>
+                        <ul class=\"list-disc pl-5\">${strengthsList}</ul>
+                    </div>
+                    <div class=\"sub-card\">
+                        <div class=\"font-bold mb-2\">Areas for Improvement</div>
+                        <ul class=\"list-disc pl-5\">${areasList}</ul>
+                    </div>`;
+                // Controls
+                const isLast = !!data.is_last_question;
+                nextQuestionBtn.classList.toggle('hidden', isLast);
+                viewReportBtn.classList.toggle('hidden', !isLast);
+                setView(questionFeedbackSection);
+            } catch (err) {
+                showToast('Error', err.message || 'Could not submit answer', 'error');
+            }
+        });
+
+        // Next question
+        nextQuestionBtn.addEventListener('click', () => {
+            currentIndex += 1;
+            if (currentIndex < totalQuestions) {
+                questionBox.textContent = questions[currentIndex];
+                answerInput.value = '';
+                window.currentTranscription = '';
+                audioTranscriptionPreview.textContent = 'Record your answer or upload an audio file below.';
+                updateProgress();
+                setView(interviewSection);
+            }
+        });
+
+        // View report
+        viewReportBtn.addEventListener('click', async () => {
+            try {
+                const res = await fetch('/final_report');
+                const data = await res.json();
+                if (!res.ok || !data.success) throw new Error(data.error || 'Failed to load report');
+                reportSummary.innerHTML = `<div class="text-center mb-4"><strong>Role:</strong> ${data.role} • <strong>Questions:</strong> ${data.total_questions}</div>`;
+                const avg = data.average_scores || {};
+                const overallScore = data.overall_score !== undefined ? data.overall_score : 'N/A';
+                const avgHtml = `
+                    <div class="text-center mb-6">
+                        <div class="bg-[var(--primary-color)] text-white rounded-lg p-6 mb-4">
+                            <h3 class="text-3xl font-bold mb-2">Final Score: ${overallScore} / 10</h3>
+                            <p class="text-sm opacity-90">Overall Performance Rating</p>
+                        </div>
+                        <div class="bg-white rounded-lg border border-slate-200 p-4">
+                            <h4 class="text-lg font-semibold mb-4 text-[var(--text-primary)]">Individual Category Scores</h4>
+                            <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+                                <div class="text-center p-3 bg-slate-50 rounded-lg">
+                                    <div class="text-2xl font-bold text-[var(--primary-color)]">${avg.Clarity ?? 0}</div>
+                                    <div class="text-xs text-[var(--text-secondary)] mt-1">Clarity</div>
+                                </div>
+                                <div class="text-center p-3 bg-slate-50 rounded-lg">
+                                    <div class="text-2xl font-bold text-[var(--primary-color)]">${avg.Knowledge ?? 0}</div>
+                                    <div class="text-xs text-[var(--text-secondary)] mt-1">Knowledge</div>
+                                </div>
+                                <div class="text-center p-3 bg-slate-50 rounded-lg">
+                                    <div class="text-2xl font-bold text-[var(--primary-color)]">${avg.Conciseness ?? 0}</div>
+                                    <div class="text-xs text-[var(--text-secondary)] mt-1">Conciseness</div>
+                                </div>
+                                <div class="text-center p-3 bg-slate-50 rounded-lg">
+                                    <div class="text-2xl font-bold text-[var(--primary-color)]">${avg.Confidence ?? 0}</div>
+                                    <div class="text-xs text-[var(--text-secondary)] mt-1">Confidence</div>
+                                </div>
+                                <div class="text-center p-3 bg-slate-50 rounded-lg">
+                                    <div class="text-2xl font-bold text-[var(--primary-color)]">${avg.Structure ?? 0}</div>
+                                    <div class="text-xs text-[var(--text-secondary)] mt-1">Structure</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                const items = (data.answers || []).map(a => {
+                    const fb = a.feedback || {};
+                    const strengths = (fb.strengths || []).map(s => `<li class=\"mb-1\">${s}</li>`).join('');
+                    const areas = (fb.areas || []).map(s => `<li class=\"mb-1\">${s}</li>`).join('');
+                    return `
+                    <details class=\"report-item mb-3\">
+                        <summary>
+                            <div class=\"font-semibold\">Q${a.question_number}. ${a.question}</div>
+                            <span class=\"text-sm text-[var(--text-secondary)]\">${a.mode || 'text'}</span>
+                        </summary>
+                        <div class=\"p-4\">
+                            <div class=\"sub-card mb-3\">
+                                <div class=\"font-bold mb-1\">Your Answer</div>
+                                <div class=\"text-[var(--text-secondary)]\">${a.answer}</div>
+                            </div>
+                            <div class=\"grid grid-cols-1 md:grid-cols-2 gap-3\">
+                                <div class=\"sub-card\">
+                                    <div class=\"font-bold mb-1\">Strengths</div>
+                                    <ul class=\"list-disc pl-5\">${strengths}</ul>
+                                </div>
+                                <div class=\"sub-card\">
+                                    <div class=\"font-bold mb-1\">Areas</div>
+                                    <ul class=\"list-disc pl-5\">${areas}</ul>
+                                </div>
+                            </div>
+                        </div>
+                    </details>`;
+                }).join('');
+                report.innerHTML = `<div class=\"mb-4\">${avgHtml}</div>${items}`;
+                setView(reportSection);
+            } catch (err) {
+                showToast('Error', err.message || 'Unable to load report', 'error');
+            }
+        });
+
+        // Restart -> feedback
+        restartBtn.addEventListener('click', () => {
+            setView(feedbackSection);
+        });
+
+        // Star ratings interaction
+        function initStars(containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) return () => 0;
+            let current = 0;
+            container.querySelectorAll('.star').forEach(star => {
+                star.addEventListener('click', () => {
+                    current = parseInt(star.getAttribute('data-rating'));
+                    container.querySelectorAll('.star').forEach(s => s.classList.remove('active'));
+                    for (let i = 1; i <= current; i++) {
+                        const el = container.querySelector(`.star[data-rating="${i}"]`);
+                        if (el) el.classList.add('active');
+                    }
+                });
+            });
+            return () => current;
+        }
+
+        const getOverall = initStars('overallRating');
+        const getAIHelp = initStars('aiHelpfulnessRating');
+        const getQuestionQuality = initStars('questionQualityRating');
+        const getAudioVideo = initStars('audioVideoRating');
+        const getUI = initStars('uiRating');
+
+        submitFeedbackBtn.addEventListener('click', async () => {
+            const payload = {
+                overall_experience_rating: getOverall(),
+                ai_helpfulness_rating: getAIHelp(),
+                feature_ratings: {
+                    question_quality: getQuestionQuality(),
+                    audio_video: getAudioVideo(),
+                    ui_ux: getUI()
+                },
+                improvement_suggestions: document.getElementById('improvementSuggestions').value.trim(),
+                would_recommend: (document.querySelector('input[name="recommendation"]:checked') || {}).value || null
+            };
+            try {
+                const res = await fetch('/submit_session_feedback', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (!res.ok || !data.success) throw new Error(data.error || 'Failed to submit feedback');
+                showToast('Thanks!', 'Your feedback has been recorded.', 'success');
+            } catch (err) {
+                showToast('Error', err.message || 'Unable to submit feedback', 'error');
+            }
+        });
+
+        finishSessionBtn.addEventListener('click', () => {
+            window.location.href = '/';
+        });
+
+        // Audio: basic record and upload
+        if (recordButton) {
+            recordButton.addEventListener('click', async () => {
+                if (!mediaRecorder) {
+                    try {
+                        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                        mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+                        recordedChunks = [];
+                        mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recordedChunks.push(e.data); };
+                        mediaRecorder.onstop = async () => {
+                            const blob = new Blob(recordedChunks, { type: 'audio/webm' });
+                            await uploadAudioBlob(blob);
+                        };
+                    } catch (err) {
+                        showToast('Mic Error', 'Microphone access denied.', 'error');
+                        return;
+                    }
+                }
+                if (mediaRecorder.state === 'recording') {
+                    mediaRecorder.stop();
+                    recordButton.classList.remove('recording');
+                    recordingStatus.classList.add('hidden');
+                    audioWaveform.classList.add('hidden');
+                } else {
+                    mediaRecorder.start();
+                    recordButton.classList.add('recording');
+                    recordingStatus.classList.remove('hidden');
+                    showWaveform();
+                }
+            });
+        }
+
+        function showWaveform() {
+            audioWaveform.innerHTML = '';
+            audioWaveform.classList.remove('hidden');
+            for (let i = 0; i < 30; i++) {
+                const bar = document.createElement('div');
+                bar.className = 'waveform-bar';
+                bar.style.left = `${i * 4}px`;
+                bar.style.height = `${10 + Math.random() * 80}%`;
+                bar.style.animationDelay = `${Math.random() * 0.5}s`;
+                audioWaveform.appendChild(bar);
+            }
+        }
+
+        async function uploadAudioBlob(blob) {
+            const form = new FormData();
+            form.append('audio_file', blob, 'answer.webm');
+            audioUploadStatus.textContent = 'Transcribing...';
+            try {
+                const res = await fetch('/upload_audio_answer', { method: 'POST', body: form });
+                const data = await res.json();
+                if (!res.ok || !data.success) throw new Error(data.error || 'Transcription failed');
+                window.currentTranscription = data.transcription || '';
+                audioTranscriptionPreview.textContent = window.currentTranscription || 'Transcription ready.';
+                audioUploadStatus.textContent = 'Audio processed.';
+                showToast('Audio', 'Audio processed successfully.', 'success');
+            } catch (err) {
+                audioUploadStatus.textContent = '';
+                showToast('Error', err.message || 'Audio upload failed', 'error');
+            }
+        }
+
+        uploadAudioButton?.addEventListener('click', async () => {
+            const file = audioUploadInput.files && audioUploadInput.files[0];
+            if (!file) return showToast('No file', 'Please choose an audio file first.', 'info');
+            await uploadAudioBlob(file);
+        });
+
+        // Video upload
+        videoUploadInput?.addEventListener('change', () => {
+            videoPreview.textContent = videoUploadInput.files?.[0]?.name || 'No video selected.';
+        });
+
+        // Add event listener for the new upload button
+        document.getElementById('uploadVideoButton')?.addEventListener('click', async () => {
+            const file = videoUploadInput.files && videoUploadInput.files[0];
+            if (!file) return showToast('No file', 'Please choose a video file first.', 'info');
+            await uploadVideoFile(file);
+        });
+
+        async function uploadVideoFile(file) {
+            const form = new FormData();
+            form.append('video_file', file);
+            videoUploadProgress.textContent = 'Uploading and analyzing video...';
+            try {
+                const res = await fetch('/submit_video_interview', { method: 'POST', body: form });
+                const data = await res.json();
+                if (!res.ok || !data.success) throw new Error(data.error || data.message || 'Video processing failed');
+                window.currentTranscription = data.transcription || '';
+                audioTranscriptionPreview.textContent = window.currentTranscription || 'Transcription ready.';
+                videoUploadProgress.textContent = data.message || 'Video analyzed.';
+                showToast('Video', 'Video processed successfully.', 'success');
+            } catch (err) {
+                videoUploadProgress.textContent = '';
+                showToast('Error', err.message || 'Video upload failed', 'error');
+            }
+        }
+
+        startWebcamButton?.addEventListener('click', async () => {
+            try {
+                webcamStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                const mime = 'video/webm';
+                const recorder = new MediaRecorder(webcamStream, { mimeType: mime });
+                const chunks = [];
+                recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+                recorder.onstop = async () => {
+                    const blob = new Blob(chunks, { type: mime });
+                    await uploadVideoFile(blob);
+                };
+                recorder.start();
+                startWebcamButton.disabled = true;
+                stopWebcamButton.disabled = false;
+                stopWebcamButton.onclick = () => {
+                    recorder.stop();
+                    webcamStream.getTracks().forEach(t => t.stop());
+                    startWebcamButton.disabled = false;
+                    stopWebcamButton.disabled = true;
+                };
+            } catch (err) {
+                showToast('Webcam Error', 'Camera/mic permission denied.', 'error');
+            }
+        });
+
+    </script>
+</body>
+</html>

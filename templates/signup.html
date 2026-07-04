@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+    <link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter:wght@400;500;700;900" onload="this.rel='stylesheet'" rel="stylesheet"/>
+    <title>Sign Up - Careerly</title>
+    <link href="data:image/x-icon;base64," rel="icon" type="image/x-icon"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <style type="text/tailwindcss">
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #4f46e5;
+            --background-color: #f8fafc;
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --accent-color: #ec4899;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+        }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen bg-[var(--background-color)] flex items-center justify-center py-8 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-md w-full space-y-6">
+            <!-- Header -->
+            <div class="text-center">
+                <div class="flex justify-center items-center gap-3 mb-4">
+                    <svg class="h-8 w-8 text-[var(--primary-color)]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" stroke-linecap="round" stroke-linejoin="round"></path>
+                        <path d="M20 12h-4" stroke-linecap="round" stroke-linejoin="round"></path>
+                        <path d="M8 12H4" stroke-linecap="round" stroke-linejoin="round"></path>
+                        <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-4v12h4a2 2 0 0 0 0-2Z"></path>
+                        <path d="M4 20a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4v12H4a2 2 0 0 1 0-2Z"></path>
+                    </svg>
+                    <h2 class="text-2xl font-bold text-[var(--text-primary)]">Careerly</h2>
+                </div>
+                <h1 class="text-2xl font-bold text-[var(--text-primary)] mb-2">Create Your Account</h1>
+                <p class="text-sm text-[var(--text-secondary)]">Join Careerly to boost your career journey</p>
+            </div>
+
+            <!-- Signup Form -->
+            <div class="bg-white rounded-lg shadow-md border border-slate-200 p-6 mt-6">
+                <form id="signupForm" class="space-y-4">
+                    <!-- Error Message -->
+                    <div id="errorMessage" class="hidden bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded-md text-sm"></div>
+                    
+                    <!-- Success Message -->
+                    <div id="successMessage" class="hidden bg-green-50 border border-green-200 text-green-700 px-3 py-2 rounded-md text-sm"></div>
+
+                    <!-- Name Fields -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label for="first_name" class="block text-sm font-medium text-[var(--text-primary)] mb-1">First Name</label>
+                            <input type="text" id="first_name" name="first_name" required 
+                                   class="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent transition-colors"
+                                   placeholder="John">
+                        </div>
+                        <div>
+                            <label for="last_name" class="block text-sm font-medium text-[var(--text-primary)] mb-1">Last Name</label>
+                            <input type="text" id="last_name" name="last_name" required 
+                                   class="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent transition-colors"
+                                   placeholder="Doe">
+                        </div>
+                    </div>
+
+                    <!-- Email Field -->
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-[var(--text-primary)] mb-1">Email Address</label>
+                        <input type="email" id="email" name="email" required 
+                               class="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent transition-colors"
+                               placeholder="john.doe@example.com">
+                    </div>
+
+                    <!-- Username Field -->
+                    <div>
+                        <label for="username" class="block text-sm font-medium text-[var(--text-primary)] mb-1">Username</label>
+                        <input type="text" id="username" name="username" required 
+                               class="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent transition-colors"
+                               placeholder="johndoe">
+                        <p class="text-xs text-[var(--text-secondary)] mt-1">Username must be unique and contain only letters, numbers, and underscores</p>
+                    </div>
+
+                    <!-- Password Fields -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label for="password" class="block text-sm font-medium text-[var(--text-primary)] mb-1">Password</label>
+                            <input type="password" id="password" name="password" required 
+                                   class="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent transition-colors"
+                                   placeholder="********">
+                        </div>
+                        <div>
+                            <label for="confirm_password" class="block text-sm font-medium text-[var(--text-primary)] mb-1">Confirm Password</label>
+                            <input type="password" id="confirm_password" name="confirm_password" required 
+                                   class="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent transition-colors"
+                                   placeholder="********">
+                        </div>
+                    </div>
+
+                    <!-- Optional Fields -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label for="profession" class="block text-sm font-medium text-[var(--text-primary)] mb-1">Profession (Optional)</label>
+                            <input type="text" id="profession" name="profession" 
+                                   class="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent transition-colors"
+                                   placeholder="Software Engineer">
+                        </div>
+                        <div>
+                            <label for="experience_level" class="block text-sm font-medium text-[var(--text-primary)] mb-1">Experience Level</label>
+                            <select id="experience_level" name="experience_level" 
+                                    class="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent transition-colors">
+                                <option value="Beginner">Beginner</option>
+                                <option value="Intermediate">Intermediate</option>
+                                <option value="Advanced">Advanced</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Phone Field -->
+                    <div>
+                        <label for="phone" class="block text-sm font-medium text-[var(--text-primary)] mb-1">Phone Number (Optional)</label>
+                        <input type="tel" id="phone" name="phone" 
+                               class="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent transition-colors"
+                               placeholder="+1 (555) 123-4567">
+                    </div>
+
+                    <!-- Terms Checkbox -->
+                    <div class="flex items-start">
+                        <input id="terms" name="terms" type="checkbox" required
+                               class="h-4 w-4 text-[var(--primary-color)] focus:ring-[var(--primary-color)] border-slate-300 rounded mt-0.5">
+                        <label for="terms" class="ml-2 text-sm text-[var(--text-secondary)]">
+                            I agree to the <a href="#" class="text-[var(--primary-color)] hover:text-[var(--secondary-color)] transition-colors">Terms of Service</a> 
+                            and <a href="#" class="text-[var(--primary-color)] hover:text-[var(--secondary-color)] transition-colors">Privacy Policy</a>
+                        </label>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" id="signupBtn"
+                            class="w-full bg-[var(--primary-color)] text-white py-2 px-4 rounded-md text-sm font-medium hover:bg-[var(--secondary-color)] focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] focus:ring-offset-2 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <span id="signupBtnText">Create Account</span>
+                        <span id="signupBtnLoading" class="hidden">Creating Account...</span>
+                    </button>
+                </form>
+
+                <!-- Login Link -->
+                <div class="mt-4 text-center">
+                    <p class="text-sm text-[var(--text-secondary)]">
+                        Already have an account? 
+                        <a href="/login" class="text-[var(--primary-color)] hover:text-[var(--secondary-color)] font-medium transition-colors">
+                            Sign in here
+                        </a>
+                    </p>
+                </div>
+
+                <!-- Back to Home -->
+                <div class="mt-3 text-center">
+                    <a href="/" class="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
+                        ← Back to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('signupForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const signupBtn = document.getElementById('signupBtn');
+            const signupBtnText = document.getElementById('signupBtnText');
+            const signupBtnLoading = document.getElementById('signupBtnLoading');
+            const errorMessage = document.getElementById('errorMessage');
+            const successMessage = document.getElementById('successMessage');
+            
+            // Hide previous messages
+            errorMessage.classList.add('hidden');
+            successMessage.classList.add('hidden');
+            
+            // Validate passwords match
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+            
+            if (password !== confirmPassword) {
+                errorMessage.textContent = 'Passwords do not match.';
+                errorMessage.classList.remove('hidden');
+                return;
+            }
+            
+            // Show loading state
+            signupBtn.disabled = true;
+            signupBtnText.classList.add('hidden');
+            signupBtnLoading.classList.remove('hidden');
+            
+            try {
+                const formData = new FormData(this);
+                const response = await fetch('/auth/signup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        first_name: formData.get('first_name'),
+                        last_name: formData.get('last_name'),
+                        email: formData.get('email'),
+                        username: formData.get('username'),
+                        password: formData.get('password'),
+                        profession: formData.get('profession'),
+                        experience_level: formData.get('experience_level'),
+                        phone: formData.get('phone')
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    successMessage.textContent = data.message || 'Account created successfully! Redirecting to login...';
+                    successMessage.classList.remove('hidden');
+                    
+                    // Redirect after short delay
+                    setTimeout(() => {
+                        window.location.href = '/login';
+                    }, 2000);
+                } else {
+                    errorMessage.textContent = data.message || 'Signup failed. Please try again.';
+                    errorMessage.classList.remove('hidden');
+                }
+            } catch (error) {
+                errorMessage.textContent = 'Network error. Please check your connection and try again.';
+                errorMessage.classList.remove('hidden');
+            } finally {
+                // Reset button state
+                signupBtn.disabled = false;
+                signupBtnText.classList.remove('hidden');
+                signupBtnLoading.classList.add('hidden');
+            }
+        });
+
+        // Real-time password confirmation validation
+        document.getElementById('confirm_password').addEventListener('input', function() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = this.value;
+            
+            if (confirmPassword && password !== confirmPassword) {
+                this.setCustomValidity('Passwords do not match');
+            } else {
+                this.setCustomValidity('');
+            }
+        });
+    </script>
+</body>
+</html>

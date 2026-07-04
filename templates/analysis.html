@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect" />
+  <link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter:wght@400;500;700;900" onload="this.rel='stylesheet'" rel="stylesheet" />
+  <title>Careerly • Analysis</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <style>
+    :root {
+      --primary-color: #6366f1;
+      --secondary-color: #4f46e5;
+      --background-color: #f8fafc;
+      --text-primary: #1e293b;
+      --text-secondary: #475569;
+      --accent-color: #ec4899;
+    }
+    body { 
+      font-family: 'Inter', sans-serif; 
+      background-color: var(--background-color);
+      color: var(--text-primary);
+    }
+    .loading { opacity: 0.6; pointer-events: none; }
+    .toast { position: fixed; top: 20px; right: 20px; z-index: 1000; padding: 12px 16px; border-radius: 8px; color: white; font-weight: 500; }
+    .toast-success { background: #10b981; }
+    .toast-error { background: #ef4444; }
+    .toast-info { background: #3b82f6; }
+    .glass {
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    
+    /* 3D Button Effects */
+    .btn-3d {
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn-3d::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+      transition: left 0.5s ease;
+    }
+    
+    .btn-3d:hover::before {
+      left: 100%;
+    }
+    
+    /* Flash animation on click */
+    @keyframes flash {
+      0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
+    }
+    
+    .flash-effect {
+      animation: flash 0.6s ease-out;
+    }
+  </style>
+</head>
+<body>
+  <div class="relative flex size-full min-h-screen flex-col group/design-root overflow-x-hidden bg-[var(--background-color)]">
+    <!-- Header matching home page -->
+    <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 px-10 py-5 bg-white">
+      <div class="flex items-center gap-4">
+        <svg class="h-8 w-8 text-[var(--primary-color)]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" stroke-linecap="round" stroke-linejoin="round"></path>
+          <path d="M20 12h-4" stroke-linecap="round" stroke-linejoin="round"></path>
+          <path d="M8 12H4" stroke-linecap="round" stroke-linejoin="round"></path>
+          <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-4v12h4a2 2 0 0 0 0-2Z"></path>
+          <path d="M4 20a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4v12H4a2 2 0 0 1 0-2Z"></path>
+        </svg>
+        <h2 class="text-2xl font-bold text-[var(--text-primary)]">Careerly</h2>
+      </div>
+      <nav class="hidden md:flex items-center gap-8">
+      </nav>
+      <div class="flex items-center gap-4">
+        <a href="/" class="text-[var(--text-secondary)] hover:text-[var(--primary-color)] transition-colors duration-200 ease-in-out p-2 rounded-full hover:bg-slate-50" title="Back to Home">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+          </svg>
+        </a>
+      </div>
+    </header>
+
+    <div class="flex h-full flex-col">
+      <main class="flex flex-1">
+        <!-- Improved Sidebar -->
+        <aside class="w-64 glass border-r border-slate-200 p-6 hidden md:flex md:flex-col">
+          <div class="mb-6">
+            <h3 class="text-lg font-bold text-[var(--text-primary)] mb-2">Career Tools</h3>
+            <p class="text-sm text-[var(--text-secondary)]">Choose a tool to get started with your career analysis</p>
+          </div>
+          <nav class="flex flex-col gap-3">
+            <button id="btnTailorCV" class="btn-3d w-full text-left px-4 py-3 rounded-lg hover:bg-[var(--primary-color)]/10 hover:text-[var(--primary-color)] transition-all duration-200 font-medium border border-slate-200/50 hover:border-[var(--primary-color)]/30 bg-white/30 shadow-lg hover:shadow-xl transform hover:-translate-y-1 active:scale-95 active:shadow-inner">
+              Tailor CV
+            </button>
+            <button id="btnCoverLetter" class="btn-3d w-full text-left px-4 py-3 rounded-lg hover:bg-[var(--primary-color)]/10 hover:text-[var(--primary-color)] transition-all duration-200 font-medium border border-slate-200/50 hover:border-[var(--primary-color)]/30 bg-white/30 shadow-lg hover:shadow-xl transform hover:-translate-y-1 active:scale-95 active:shadow-inner">
+              Cover Letter
+            </button>
+            <button id="btnAnalyzeCV" class="btn-3d w-full text-left px-4 py-3 rounded-lg hover:bg-[var(--primary-color)]/10 hover:text-[var(--primary-color)] transition-all duration-200 font-medium border border-slate-200/50 hover:border-[var(--primary-color)]/30 bg-white/30 shadow-lg hover:shadow-xl transform hover:-translate-y-1 active:scale-95 active:shadow-inner">
+              CV Analysis
+            </button>
+            <button id="btnFindJobs" class="btn-3d w-full text-left px-4 py-3 rounded-lg hover:bg-[var(--primary-color)]/10 hover:text-[var(--primary-color)] transition-all duration-200 font-medium border border-slate-200/50 hover:border-[var(--primary-color)]/30 bg-white/30 shadow-lg hover:shadow-xl transform hover:-translate-y-1 active:scale-95 active:shadow-inner">
+              Find Jobs
+            </button>
+            <button id="btnCareerRoadmap" class="btn-3d w-full text-left px-4 py-3 rounded-lg hover:bg-[var(--primary-color)]/10 hover:text-[var(--primary-color)] transition-all duration-200 font-medium border border-slate-200/50 hover:border-[var(--primary-color)]/30 bg-white/30 shadow-lg hover:shadow-xl transform hover:-translate-y-1 active:scale-95 active:shadow-inner">
+              Career Roadmap
+            </button>
+            <button id="btnWeeklyPlan" class="btn-3d w-full text-left px-4 py-3 rounded-lg hover:bg-[var(--primary-color)]/10 hover:text-[var(--primary-color)] transition-all duration-200 font-medium border border-slate-200/50 hover:border-[var(--primary-color)]/30 bg-white/30 shadow-lg hover:shadow-xl transform hover:-translate-y-1 active:scale-95 active:shadow-inner">
+              Weekly Plan
+            </button>
+            <button id="btnCourses" class="btn-3d w-full text-left px-4 py-3 rounded-lg hover:bg-[var(--primary-color)]/10 hover:text-[var(--primary-color)] transition-all duration-200 font-medium border border-slate-200/50 hover:border-[var(--primary-color)]/30 bg-white/30 shadow-lg hover:shadow-xl transform hover:-translate-y-1 active:scale-95 active:shadow-inner">
+              Courses
+            </button>
+          </nav>
+          <div class="mt-auto pt-6">
+            <div class="p-4 bg-gradient-to-r from-[var(--primary-color)]/10 to-[var(--accent-color)]/10 rounded-lg border border-[var(--primary-color)]/20">
+              <p class="text-sm font-medium text-[var(--text-primary)] mb-1">All Tools Active</p>
+              <p class="text-xs text-[var(--text-secondary)]">Ready to boost your career!</p>
+            </div>
+          </div>
+        </aside>
+        <!-- Main Content -->
+        <div class="flex-1 p-6">
+          <div class="max-w-4xl mx-auto">
+            <div class="mb-8">
+              <h1 class="text-3xl md:text-4xl font-black text-[var(--text-primary)] leading-tight mb-4">
+                Detailed Career 
+                <span class="text-[var(--primary-color)]">Analysis</span>
+              </h1>
+              <p class="text-lg text-[var(--text-secondary)] leading-relaxed">
+                Upload your CV and job description to get personalized career insights
+              </p>
+            </div>
+            
+            <!-- File Upload Section -->
+            <section id="uploadSection" class="bg-white rounded-2xl border border-slate-200 p-8 shadow-lg mb-6">
+              <h3 class="text-xl font-bold mb-4 text-[var(--text-primary)]">Upload Your CV</h3>
+              <div class="flex items-center gap-4">
+                <input type="file" id="cvFile" accept=".pdf,.doc,.docx" class="flex-1 text-sm text-[var(--text-secondary)] file:mr-4 file:py-3 file:px-6 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[var(--primary-color)] file:text-white hover:file:bg-[var(--secondary-color)] file:transition-colors file:duration-200">
+                <button id="uploadCV" class="bg-[var(--primary-color)] text-white px-6 py-3 rounded-lg hover:bg-[var(--secondary-color)] font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">Upload CV</button>
+              </div>
+              <p class="text-sm text-[var(--text-secondary)] mt-3">Supported formats: PDF, DOC, DOCX</p>
+            </section>
+
+            <!-- Job Description Section -->
+            <section id="jobSection" class="bg-white rounded-2xl border border-slate-200 p-8 shadow-lg mb-6">
+              <h3 class="text-xl font-bold mb-4 text-[var(--text-primary)]">Job Description</h3>
+              <textarea id="jobDescription" placeholder="Paste the job description here..." class="w-full h-32 p-4 border border-slate-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)] transition-all duration-200"></textarea>
+            </section>
+
+            <!-- Results Section -->
+            <section id="resultsSection" class="bg-white rounded-2xl border border-slate-200 p-8 shadow-lg hidden">
+              <h3 class="text-xl font-bold mb-4 text-[var(--text-primary)]">Analysis Results</h3>
+              <div id="resultsContent" class="prose max-w-none">
+                <p class="text-[var(--text-secondary)]">Select a tool from the sidebar to get started.</p>
+              </div>
+            </section>
+
+            <!-- Loading Section -->
+            <section id="loadingSection" class="bg-white rounded-2xl border border-slate-200 p-8 shadow-lg hidden">
+              <div class="flex items-center justify-center">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--primary-color)]"></div>
+                <span class="ml-3 text-[var(--text-secondary)]">Processing...</span>
+              </div>
+            </section>
+          </div>
+        </div>
+      </main>
+      
+      <!-- Footer -->
+      <footer class="border-t border-slate-200 bg-white px-6 md:px-10 py-6 text-center text-[var(--text-secondary)]">
+        <p>© <span id="yearNow"></span> Careerly. All rights reserved.</p>
+      </footer>
+    </div>
+  </div>
+
+  <script>
+    // Global variables
+    let uploadedCVPath = null;
+    let uploadedCVName = null;
+
+    // Helper function to format markdown-like text to HTML
+    function formatContentToHTML(content) {
+      if (!content) return '';
+      
+      // Replace markdown-style formatting with HTML
+      let formatted = content
+        // Replace **bold** with <strong>
+        .replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-[var(--text-primary)]">$1</strong>')
+        // Replace * bullet points with proper list items
+        .replace(/^\s*\*\s+(.+)$/gm, '<li class="ml-4 mb-3 flex items-start"><span class="text-[var(--primary-color)] mr-3 mt-1">•</span><span class="leading-relaxed">$1</span></li>')
+        // Replace step headers (Step 1:, Step 2:, etc.)
+        .replace(/^(Step \d+:.*?)$/gm, '<div class="mt-8 mb-4"><h3 class="text-xl font-bold text-[var(--primary-color)] pb-3 border-b-2 border-[var(--primary-color)]/20">$1</h3></div>')
+        // Replace section headers (Skills:, Courses:, etc.)
+        .replace(/^\s*(Skills|Courses\/Projects|Milestones|Courses|Projects):\s*$/gm, '<h4 class="font-semibold text-[var(--text-primary)] mt-6 mb-3 text-base">$1:</h4>')
+        // Make URLs clickable
+        .replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" class="text-[var(--primary-color)] hover:text-[var(--secondary-color)] underline break-all">$1</a>')
+        // Handle line breaks and spacing
+        .replace(/\n\n/g, '</ul><div class="mb-6"></div><ul class="list-none space-y-2">')
+        .replace(/\n/g, ' ');
+      
+      // Wrap in proper list structure
+      formatted = '<ul class="list-none space-y-2">' + formatted + '</ul>';
+      
+      // Clean up any malformed list tags
+      formatted = formatted
+        .replace(/<\/ul><ul class="list-none space-y-2">/g, '')
+        .replace(/<\/ul><div class="mb-6"><\/div><ul class="list-none space-y-2">/g, '</ul><div class="mb-6"></div><ul class="list-none space-y-2">');
+      
+      return formatted;
+    }
+    
+    // Enhanced function for cover letter formatting
+    function formatCoverLetter(content) {
+      if (!content) return '';
+      
+      return content
+        // Split into paragraphs
+        .split('\n\n')
+        .map(paragraph => {
+          const trimmed = paragraph.trim();
+          if (!trimmed) return '';
+          
+          // Check if it's a greeting/header
+          if (trimmed.startsWith('Dear ') || trimmed.includes('Hiring Manager')) {
+            return `<div class="mb-6"><p class="text-lg font-medium text-[var(--text-primary)]">${trimmed}</p></div>`;
+          }
+          
+          // Check if it's a closing
+          if (trimmed.startsWith('Sincerely') || trimmed.startsWith('Best regards') || trimmed.startsWith('Thank you')) {
+            return `<div class="mt-8 mb-4"><p class="text-base font-medium text-[var(--text-primary)]">${trimmed}</p></div>`;
+          }
+          
+          // Regular paragraph
+          return `<p class="mb-4 leading-relaxed text-[var(--text-secondary)]">${trimmed}</p>`;
+        })
+        .filter(p => p)
+        .join('');
+    }
+    
+    // Special function for course formatting with clickable links
+    function formatCourses(content) {
+      if (!content) return '';
+      
+      return content
+        .split('\n')
+        .map(line => {
+          const trimmed = line.trim();
+          if (!trimmed) return '';
+          
+          // Handle course lines with format: - Course Name : URL
+          if (trimmed.startsWith('- ') && trimmed.includes(' : ')) {
+            const [coursePart, urlPart] = trimmed.split(' : ');
+            const courseName = coursePart.replace('- ', '').trim();
+            const url = urlPart.trim();
+            
+            if (url && url !== 'Link not found' && url.startsWith('http')) {
+              return `
+                <div class="bg-gradient-to-r from-slate-50 to-white border border-slate-200 rounded-lg p-4 mb-3 hover:shadow-md transition-shadow">
+                  <h5 class="font-semibold text-[var(--text-primary)] mb-2">${courseName}</h5>
+                  <a href="${url}" target="_blank" class="inline-flex items-center text-[var(--primary-color)] hover:text-[var(--secondary-color)] font-medium text-sm transition-colors">
+                    <span>View Course</span>
+                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                    </svg>
+                  </a>
+                </div>
+              `;
+            } else {
+              return `
+                <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-3">
+                  <h5 class="font-semibold text-[var(--text-primary)] mb-1">${courseName}</h5>
+                  <p class="text-sm text-gray-500">Search for this course on Coursera, Udemy, or other platforms</p>
+                </div>
+              `;
+            }
+          }
+          
+          // Handle other content
+          return `<p class="mb-2 text-[var(--text-secondary)]">${trimmed}</p>`;
+        })
+        .filter(p => p)
+        .join('');
+    }
+    function showToast(message, type = 'info') {
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    function showLoading() {
+      document.getElementById('loadingSection').classList.remove('hidden');
+      document.getElementById('resultsSection').classList.add('hidden');
+    }
+
+    function hideLoading() {
+      document.getElementById('loadingSection').classList.add('hidden');
+      document.getElementById('resultsSection').classList.remove('hidden');
+    }
+
+    function setActiveButton(buttonId) {
+      // Add flash effect
+      const activeBtn = document.getElementById(buttonId);
+      if (activeBtn) {
+        activeBtn.classList.add('flash-effect');
+        setTimeout(() => activeBtn.classList.remove('flash-effect'), 600);
+      }
+      
+      // Remove active state from all buttons
+      document.querySelectorAll('nav button').forEach(btn => {
+        btn.classList.remove('bg-[var(--primary-color)]', 'text-white', 'border-[var(--primary-color)]');
+        btn.classList.add('hover:bg-[var(--primary-color)]/10', 'hover:text-[var(--primary-color)]', 'border-slate-200/50', 'bg-white/30');
+      });
+      
+      // Add active state to selected button
+      if (activeBtn) {
+        activeBtn.classList.remove('hover:bg-[var(--primary-color)]/10', 'hover:text-[var(--primary-color)]', 'border-slate-200/50', 'bg-white/30');
+        activeBtn.classList.add('bg-[var(--primary-color)]', 'text-white', 'border-[var(--primary-color)]');
+      }
+    }
+
+    // CV Upload Handler
+    document.getElementById('uploadCV').addEventListener('click', async () => {
+      const fileInput = document.getElementById('cvFile');
+      const file = fileInput.files[0];
+      
+      if (!file) {
+        showToast('Please select a CV file first', 'error');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('cv_file', file);
+
+      try {
+        showLoading();
+        const response = await fetch('/api/upload-cv', {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await response.json();
+        
+        if (data.success) {
+          uploadedCVPath = data.filepath;
+          uploadedCVName = data.filename;
+          showToast('CV uploaded successfully!', 'success');
+        } else {
+          throw new Error(data.error || 'Upload failed');
+        }
+      } catch (error) {
+        showToast(error.message, 'error');
+      } finally {
+        hideLoading();
+      }
+    });
+
+    // API helper functions
+    async function callCareerAPI(endpoint, data) {
+      const response = await fetch(`/api/${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `API call failed: ${endpoint}`);
+      }
+      
+      return response.json();
+    }
+
+    // Button handlers
+    document.getElementById('btnTailorCV').addEventListener('click', async () => {
+      if (!uploadedCVPath) {
+        showToast('Please upload your CV first', 'error');
+        return;
+      }
+
+      const jobDesc = document.getElementById('jobDescription').value.trim();
+      if (!jobDesc) {
+        showToast('Please enter a job description', 'error');
+        return;
+      }
+
+      setActiveButton('btnTailorCV');
+      showLoading();
+
+      try {
+        const result = await callCareerAPI('tailor-cv', {
+          cv_path: uploadedCVPath,
+          job_description: jobDesc
+        });
+
+        if (result.success) {
+          const content = `
+            <h4 class="text-lg font-bold mb-3">CV Tailored Successfully!</h4>
+            <p class="mb-3">Your CV has been tailored for the job description.</p>
+            ${result.download_url ? `<a href="${result.download_url}" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 inline-block">Download Tailored CV</a>` : ''}
+            <div class="mt-4 p-4 bg-slate-50 rounded-md">
+              <h5 class="font-bold mb-2">Tailored Content Preview:</h5>
+              <pre class="text-sm whitespace-pre-wrap">${JSON.stringify(result.structured_cv, null, 2)}</pre>
+            </div>
+          `;
+          document.getElementById('resultsContent').innerHTML = content;
+        }
+      } catch (error) {
+        showToast(error.message, 'error');
+      } finally {
+        hideLoading();
+      }
+    });
+
+    document.getElementById('btnCoverLetter').addEventListener('click', async () => {
+      if (!uploadedCVPath) {
+        showToast('Please upload your CV first', 'error');
+        return;
+      }
+
+      const jobDesc = document.getElementById('jobDescription').value.trim();
+      if (!jobDesc) {
+        showToast('Please enter a job description', 'error');
+        return;
+      }
+
+      setActiveButton('btnCoverLetter');
+      showLoading();
+
+      try {
+        const result = await callCareerAPI('generate-cover-letter', {
+          cv_path: uploadedCVPath,
+          job_description: jobDesc
+        });
+
+        if (result.success) {
+          const content = `
+            <h4 class="text-lg font-bold mb-3">Cover Letter Generated</h4>
+            <div class="bg-white rounded-lg border border-slate-200 p-8 shadow-sm">
+              <div class="prose max-w-none">
+                ${formatCoverLetter(result.cover_letter)}
+              </div>
+            </div>
+          `;
+          document.getElementById('resultsContent').innerHTML = content;
+        }
+      } catch (error) {
+        showToast(error.message, 'error');
+      } finally {
+        hideLoading();
+      }
+    });
+
+    document.getElementById('btnAnalyzeCV').addEventListener('click', async () => {
+      if (!uploadedCVPath) {
+        showToast('Please upload your CV first', 'error');
+        return;
+      }
+
+      const jobDesc = document.getElementById('jobDescription').value.trim();
+      if (!jobDesc) {
+        showToast('Please enter a job description', 'error');
+        return;
+      }
+
+      setActiveButton('btnAnalyzeCV');
+      showLoading();
+
+      try {
+        const result = await callCareerAPI('analyze-strengths-weaknesses', {
+          cv_path: uploadedCVPath,
+          job_description: jobDesc
+        });
+
+        if (result.success) {
+          const content = `
+            <h4 class="text-lg font-bold mb-3">CV Analysis Results</h4>
+            <div class="p-4 bg-slate-50 rounded-md">
+              <pre class="whitespace-pre-wrap text-sm">${result.analysis}</pre>
+            </div>
+          `;
+          document.getElementById('resultsContent').innerHTML = content;
+        }
+      } catch (error) {
+        showToast(error.message, 'error');
+      } finally {
+        hideLoading();
+      }
+    });
+
+    document.getElementById('btnFindJobs').addEventListener('click', async () => {
+      const jobDesc = document.getElementById('jobDescription').value.trim();
+      if (!jobDesc) {
+        showToast('Please enter a job description', 'error');
+        return;
+      }
+
+      setActiveButton('btnFindJobs');
+      showLoading();
+      
+      // Initialize results section with loading state
+      document.getElementById('resultsContent').innerHTML = `
+        <h4 class="text-lg font-bold mb-3 text-[var(--text-primary)]">Searching for Jobs...</h4>
+        <div class="mb-4">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-sm text-[var(--text-secondary)]">Finding jobs</span>
+            <span id="jobCount" class="text-sm font-medium text-[var(--primary-color)]">0 jobs found</span>
+          </div>
+          <div class="w-full bg-slate-200 rounded-full h-2">
+            <div id="progressBar" class="bg-gradient-to-r from-[var(--primary-color)] to-[var(--secondary-color)] h-2 rounded-full transition-all duration-300" style="width: 5%"></div>
+          </div>
+          <p class="text-xs text-[var(--text-secondary)] mt-2">Jobs will appear below as they are found...</p>
+        </div>
+        <div id="jobsList" class="space-y-3">
+          <!-- Jobs will appear here as they are found -->
+        </div>
+      `;
+      hideLoading();
+
+      try {
+        // Start the job search API call
+        const response = await fetch('/api/scrape-jobs', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            job_description: jobDesc,
+            location: 'Pakistan'
+          })
+        });
+        
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.error || 'Job search failed');
+        }
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          const jobs = result.jobs || [];
+          const jobsList = document.getElementById('jobsList');
+          const jobCount = document.getElementById('jobCount');
+          const progressBar = document.getElementById('progressBar');
+          
+          // Update header to show we're displaying results
+          document.querySelector('#resultsContent h4').innerHTML = `Finding Jobs... (${jobs.length} total found)`;
+          
+          // Display jobs one by one with realistic timing
+          let displayedJobs = 0;
+          
+          const displayNextJob = () => {
+            if (displayedJobs < jobs.length) {
+              const job = jobs[displayedJobs];
+              
+              // Create job element
+              const jobElement = document.createElement('div');
+              jobElement.className = 'p-4 border border-slate-200 rounded-lg bg-white shadow-sm opacity-0 transform translate-y-4 transition-all duration-500';
+              jobElement.innerHTML = `
+                <div class="flex items-start justify-between">
+                  <div class="flex-1">
+                    <h5 class="font-bold text-[var(--text-primary)] mb-1">${job.title}</h5>
+                    <p class="text-sm text-[var(--text-secondary)] mb-2">${job.company} • ${job.location}</p>
+                    <p class="text-xs text-slate-500 mb-3">Source: ${job.source}</p>
+                    <a href="${job.link}" target="_blank" class="inline-flex items-center text-[var(--primary-color)] text-sm hover:text-[var(--secondary-color)] hover:underline transition-colors">
+                      <span>View Job</span>
+                      <svg class="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                      </svg>
+                    </a>
+                  </div>
+                  <div class="ml-4 flex-shrink-0">
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                      New
+                    </span>
+                  </div>
+                </div>
+              `;
+              
+              // Add to the list
+              jobsList.appendChild(jobElement);
+              
+              // Animate job appearance
+              setTimeout(() => {
+                jobElement.classList.remove('opacity-0', 'translate-y-4');
+                jobElement.classList.add('opacity-100', 'translate-y-0');
+              }, 100);
+              
+              displayedJobs++;
+              
+              // Update counter and progress
+              jobCount.textContent = `${displayedJobs} of ${jobs.length} jobs found`;
+              const progress = Math.min(95, (displayedJobs / jobs.length) * 90 + 5);
+              progressBar.style.width = `${progress}%`;
+              
+              // Show completion message if this is the last job
+              if (displayedJobs === jobs.length) {
+                setTimeout(() => {
+                  document.querySelector('#resultsContent h4').innerHTML = `Job Search Complete! (${jobs.length} jobs found)`;
+                  jobCount.textContent = `${jobs.length} jobs found - Search complete`;
+                  progressBar.style.width = '100%';
+                  
+                  // Add completion indicator
+                  const completionBadge = document.createElement('div');
+                  completionBadge.className = 'mt-3 p-2 bg-green-50 border border-green-200 rounded-lg opacity-0 transition-opacity duration-500';
+                  completionBadge.innerHTML = `
+                    <div class="flex items-center text-green-800 text-sm">
+                      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                      </svg>
+                      Search completed successfully! You can now review all found positions.
+                    </div>
+                  `;
+                  document.getElementById('resultsContent').appendChild(completionBadge);
+                  setTimeout(() => completionBadge.classList.remove('opacity-0'), 200);
+                }, 500);
+              } else {
+                // Schedule next job display with realistic delay
+                const delay = 800 + Math.random() * 1200; // 0.8-2.0 seconds
+                setTimeout(displayNextJob, delay);
+              }
+            }
+          };
+          
+          // Start displaying jobs after a brief delay
+          setTimeout(displayNextJob, 1000);
+          
+        } else {
+          throw new Error('No jobs found');
+        }
+      } catch (error) {
+        showToast(error.message, 'error');
+        document.getElementById('resultsContent').innerHTML = `
+          <h4 class="text-lg font-bold mb-3 text-red-600">Search Failed</h4>
+          <p class="text-[var(--text-secondary)]">Unable to find jobs. Please try again.</p>
+        `;
+      }
+    });
+
+    document.getElementById('btnCareerRoadmap').addEventListener('click', async () => {
+      const jobDesc = document.getElementById('jobDescription').value.trim();
+      if (!jobDesc) {
+        showToast('Please enter a job description', 'error');
+        return;
+      }
+
+      setActiveButton('btnCareerRoadmap');
+      showLoading();
+
+      try {
+        const result = await callCareerAPI('career-roadmap', {
+          job_description: jobDesc,
+          years: 3
+        });
+
+        if (result.success) {
+          const content = `
+            <h4 class="text-lg font-bold mb-3">Career Roadmap (3 Years)</h4>
+            <div class="bg-white rounded-lg border border-slate-200 p-6 shadow-sm">
+              ${formatContentToHTML(result.roadmap)}
+            </div>
+          `;
+          document.getElementById('resultsContent').innerHTML = content;
+        }
+      } catch (error) {
+        showToast(error.message, 'error');
+      } finally {
+        hideLoading();
+      }
+    });
+
+    document.getElementById('btnWeeklyPlan').addEventListener('click', async () => {
+      if (!uploadedCVPath) {
+        showToast('Please upload your CV first', 'error');
+        return;
+      }
+
+      const jobDesc = document.getElementById('jobDescription').value.trim();
+      if (!jobDesc) {
+        showToast('Please enter a job description', 'error');
+        return;
+      }
+
+      setActiveButton('btnWeeklyPlan');
+      showLoading();
+
+      try {
+        const result = await callCareerAPI('weekly-learning-plan', {
+          cv_path: uploadedCVPath,
+          job_description: jobDesc
+        });
+
+        if (result.success) {
+          const content = `
+            <h4 class="text-lg font-bold mb-3">Weekly Learning Plan</h4>
+            <div class="bg-white rounded-lg border border-slate-200 p-6 shadow-sm">
+              ${formatContentToHTML(result.plan)}
+            </div>
+          `;
+          document.getElementById('resultsContent').innerHTML = content;
+        }
+      } catch (error) {
+        showToast(error.message, 'error');
+      } finally {
+        hideLoading();
+      }
+    });
+
+    document.getElementById('btnCourses').addEventListener('click', async () => {
+      if (!uploadedCVPath) {
+        showToast('Please upload your CV first', 'error');
+        return;
+      }
+
+      const jobDesc = document.getElementById('jobDescription').value.trim();
+      if (!jobDesc) {
+        showToast('Please enter a job description', 'error');
+        return;
+      }
+
+      setActiveButton('btnCourses');
+      showLoading();
+
+      try {
+        const result = await callCareerAPI('suggest-courses', {
+          cv_path: uploadedCVPath,
+          job_description: jobDesc
+        });
+
+        if (result.success) {
+          const content = `
+            <h4 class="text-lg font-bold mb-3">Recommended Courses</h4>
+            <div class="bg-white rounded-lg border border-slate-200 p-6 shadow-sm">
+              ${formatCourses(result.courses)}
+            </div>
+          `;
+          document.getElementById('resultsContent').innerHTML = content;
+        }
+      } catch (error) {
+        showToast(error.message, 'error');
+      } finally {
+        hideLoading();
+      }
+    });
+    
+    // Set current year
+    document.getElementById('yearNow').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
+
