@@ -19,7 +19,7 @@ except Exception:
     whisper = None
 
 # Configure your Gemini API key
-genai.configure(api_key="AIzaSyCTmTqlbqnB77bVSceGX6p5tqh0mSE-sQs")
+genai.configure(api_key="GEMINI_API_KEY")
 
 EVAL_METRICS = ["Clarity", "Knowledge", "Conciseness", "Confidence", "Structure"]
 
