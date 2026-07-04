@@ -56,7 +56,7 @@ def get_career_system():
     global career_system
     if career_system is None:
         # Use the same API key as MasterAgent
-        career_system = CareerAutomationSystem(gemini_api_key="AIzaSyDMOJZdWYpjwaY4daRk4pBFUovl0adumiU")
+        career_system = CareerAutomationSystem(gemini_api_key="GEMINI_API_KEY")
     return career_system
 
 def allowed_file(filename: str) -> bool:
