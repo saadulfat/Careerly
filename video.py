@@ -24,7 +24,7 @@ def strip_emojis(text):
 
 def get_gemini_api_key():
     """Return your Gemini API key (simple hardcoded method)"""
-    return "AIzaSyCddNdCN__Bd-8SYd7H6vbRYWe9RqCkfNk"
+    return "GEMINI_API_KEY"
 
 class InterviewAnalyzer:
     def __init__(self):
